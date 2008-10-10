@@ -1,4 +1,4 @@
-package org.ogroup.whale.view;
+package org.ogroup.kotail.view;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -8,9 +8,9 @@ import javax.swing.JMenuItem;
  *
  * @author dseymore
  */
-public class WhaleMenuBar extends JMenuBar{
+public class KotailMenuBar extends JMenuBar{
 
-    public WhaleMenuBar() {
+    public KotailMenuBar() {
         super();
         
         JMenu m = new JMenu("Menu");

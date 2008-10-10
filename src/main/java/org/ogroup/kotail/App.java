@@ -1,6 +1,6 @@
-package org.ogroup.whale;
+package org.ogroup.kotail;
 
-import org.ogroup.whale.view.WhaleFrame;
+import org.ogroup.kotail.view.KotailFrame;
 import javax.swing.JFrame;
 
 /**
@@ -21,7 +21,7 @@ public class App
 //                System.out.println(n.getCanonicalName());
 //            }
             
-        JFrame frame = new WhaleFrame();
+        JFrame frame = new KotailFrame();
         frame.pack();
         frame.setVisible(true);        
         

@@ -1,4 +1,4 @@
-package org.ogroup.whale.view;
+package org.ogroup.kotail.view;
 
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
