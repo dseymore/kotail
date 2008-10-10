@@ -1,4 +1,4 @@
-package org.ogroup.whale.view;
+package org.ogroup.kotail.view;
 
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
@@ -19,9 +19,9 @@ import org.jfree.data.general.DefaultPieDataset;
  *
  * @author dseymore
  */
-public class WhaleFrame extends JFrame{
+public class KotailFrame extends JFrame{
 
-    public WhaleFrame() {
+    public KotailFrame() {
         ResourceBundle bundle = ResourceBundle.getBundle("Messages");
             
         //ok, left side is a Tree
@@ -44,7 +44,7 @@ public class WhaleFrame extends JFrame{
         this.setTitle(bundle.getString("MainWindow.title"));
         this.setContentPane(pane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setJMenuBar(new WhaleMenuBar());
+        setJMenuBar(new KotailMenuBar());
     }
 
 }

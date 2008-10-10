@@ -1,4 +1,4 @@
-package org.ogroup.whale;
+package org.ogroup.kotail;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
