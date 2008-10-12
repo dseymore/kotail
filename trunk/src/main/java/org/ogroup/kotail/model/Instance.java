@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.ogroup.kotail.model;
 
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 /**
  *
  * @author denki
  */
-public class Instance implements TreeNode{
+public class Instance implements MutableTreeNode {
 
     private String name;
     private TreeNode parent;
@@ -41,7 +41,7 @@ public class Instance implements TreeNode{
 
     @Override
     public int getIndex(TreeNode node) {
-        if (node instanceof Bean){
+        if (node instanceof Bean) {
             return mbeans.indexOf(node);
         }
         //not found
@@ -53,11 +53,35 @@ public class Instance implements TreeNode{
         return parent;
     }
 
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
+    @Override
+    public void setParent(MutableTreeNode newParent) {
+        parent = newParent;
     }
-    
-    
+
+    @Override
+    public void setUserObject(Object object) {
+        return;
+    }
+
+    @Override
+    public void insert(MutableTreeNode child, int index) {
+        mbeans.add((Bean) child);
+    }
+
+    @Override
+    public void remove(int index) {
+        mbeans.remove(index);
+    }
+
+    @Override
+    public void remove(MutableTreeNode node) {
+        mbeans.remove(node);
+    }
+
+    @Override
+    public void removeFromParent() {
+//        parent.remove(this);
+    }
 
     @Override
     public boolean isLeaf() {
@@ -71,10 +95,8 @@ public class Instance implements TreeNode{
     public void setName(String name) {
         this.name = name;
     }
-    
-    public String toString(){
+
+    public String toString() {
         return name;
     }
-    
-    
 }
