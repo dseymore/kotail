@@ -6,17 +6,18 @@ package org.ogroup.kotail.model;
 
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 /**
  *
  * @author denki
  */
-public class Application implements TreeNode {
+public class Application implements MutableTreeNode {
 
     private Vector<Instance> instances;
     private String name;
-    private TreeNode parent;
+    private MutableTreeNode parent;
 
     @Override
     public Enumeration children() {
@@ -29,7 +30,7 @@ public class Application implements TreeNode {
     }
 
     @Override
-    public TreeNode getChildAt(int childIndex) {
+    public MutableTreeNode getChildAt(int childIndex) {
         return instances.get(childIndex);
     }
 
@@ -52,10 +53,41 @@ public class Application implements TreeNode {
         return parent;
     }
     
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
+    
+    @Override
+    public void setParent(MutableTreeNode newParent) {
+        parent = newParent;
     }
 
+    @Override
+    public void setUserObject(Object object) {
+        return;
+    }
+    
+    
+    @Override
+    public void insert(MutableTreeNode child, int index) {
+        if (instances == null){
+            instances = new Vector<Instance>();
+        }
+        instances.add((Instance)child);
+    }
+
+     @Override
+    public void remove(int index) {
+        instances.remove(index);
+    }
+
+    @Override
+    public void remove(MutableTreeNode node) {
+        instances.remove(node);
+    }
+
+    @Override
+    public void removeFromParent() {
+        parent.remove(this);
+    }
+    
     @Override
     public boolean isLeaf() {
         return (instances == null || instances.size() < 1);
@@ -72,4 +104,6 @@ public class Application implements TreeNode {
     public String toString() {
         return name;
     }
+    
+    
 }

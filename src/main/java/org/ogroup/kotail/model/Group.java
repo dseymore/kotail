@@ -72,6 +72,9 @@ public class Group implements MutableTreeNode{
 
     @Override
     public void insert(MutableTreeNode child, int index) {
+        if (applications == null){
+            applications = new Vector<Application>();
+        }
         applications.add((Application)child);
     }
 

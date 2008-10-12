@@ -7,8 +7,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
+import org.ogroup.kotail.model.Application;
 import org.ogroup.kotail.model.Group;
 import org.ogroup.kotail.model.Session;
+import org.ogroup.kotail.view.dialog.ApplicationDialog;
 
 /**
  *
@@ -42,6 +44,21 @@ public class KotailMenuBar extends JMenuBar{
         m.add(addGroupItem);
         
         JMenuItem addAppItem = new JMenuItem("Add Application");
+        addAppItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ApplicationDialog ad = new ApplicationDialog();
+                if (ad.getRet() > 0){
+                    Group g = ad.getSelectedGroup();
+                    Application a = new Application();
+                    a.setName(ad.getApplicationName());
+                    a.setParent(g);
+                    g.insert(a, 1);
+                    ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload(g);
+                }
+            }
+        });
         m.add(addAppItem);
         
         JMenuItem addInstanceItem = new JMenuItem("Add Instance");
