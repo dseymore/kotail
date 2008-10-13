@@ -55,7 +55,6 @@ public class KotailFrame extends JFrame{
         dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY_OR_MOVE, new OperationDragGestureListener());
         
         JScrollPane tabScroll = new JScrollPane(tabs);
-        tabs.setTransferHandler(new OperationTransferHandler());
         
         
         JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, tabScroll);
