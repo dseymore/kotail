@@ -10,7 +10,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.management.MBeanOperationInfo;
-import javax.management.ObjectName;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
