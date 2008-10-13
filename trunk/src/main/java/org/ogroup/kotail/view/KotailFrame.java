@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
@@ -38,9 +39,13 @@ public class KotailFrame extends JFrame{
         tree.setShowsRootHandles(false);
         tree.setRootVisible(false);
         
+        JScrollPane treeScroll = new JScrollPane(tree);
         
         JTabbedPane tabs = new JTabbedPane();
-        JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tree, tabs);
+        JScrollPane tabScroll = new JScrollPane(tabs);
+        
+        
+        JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, tabScroll);
         
         DefaultPieDataset pieDataset = new DefaultPieDataset();
         pieDataset.setValue("JavaWorld", new Integer(75));
