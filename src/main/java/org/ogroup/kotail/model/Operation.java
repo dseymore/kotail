@@ -24,7 +24,7 @@ public class Operation extends DefaultMutableTreeNode implements Transferable{
     //i DO hate this. 
     static{
         try{
-            FLAVOR = new DataFlavor("text/html;class=java.lang.String");
+            FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType);
         }catch(Exception e){
             //what?!
         }
@@ -47,7 +47,8 @@ public class Operation extends DefaultMutableTreeNode implements Transferable{
     
      @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        return info.getName() + "|" + ((ObjectName)((Bean)this.getParent()).getUserObject()).getCanonicalName();
+         //return info.getName() + "|" + ((ObjectName)((Bean)this.getParent()).getUserObject()).getCanonicalName();
+        return this; 
     }
 
     @Override
