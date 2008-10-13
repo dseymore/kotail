@@ -40,14 +40,20 @@ public class MbeanDiscovery {
                                 Bean b = new Bean();
                                 b.setUserObject(n);
                                 MBeanInfo info = mbsc.getMBeanInfo(n);
+                                //go through all the ops
                                 for (MBeanOperationInfo xyz : info.getOperations()){
-                                    if(xyz.getSignature() == null || xyz.getSignature().length == 0){
+                                    //only had signatureless non void returning operations
+                                    if((xyz.getSignature() == null || xyz.getSignature().length == 0) && (!"void".equalsIgnoreCase(xyz.getReturnType()))){
                                         Operation op = new Operation();
                                         op.setInfo(xyz);
                                         b.add(op);
                                     }
                                 }
-                                app.add(b);
+                                //only show beans with operations
+                                if (!b.isLeaf()){
+                                    app.add(b);
+                                }
+                                //reload the tree!
                                 ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
                             }
                         } catch (Exception e) {

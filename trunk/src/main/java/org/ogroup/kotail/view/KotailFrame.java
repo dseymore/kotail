@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
+import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import org.jfree.chart.ChartFactory;
@@ -38,11 +39,13 @@ public class KotailFrame extends JFrame{
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setShowsRootHandles(false);
         tree.setRootVisible(false);
+        tree.setDragEnabled(true);
         
         JScrollPane treeScroll = new JScrollPane(tree);
         
         JTabbedPane tabs = new JTabbedPane();
         JScrollPane tabScroll = new JScrollPane(tabs);
+        tabs.setTransferHandler(new OperationTransferHandler());
         
         
         JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, tabScroll);
