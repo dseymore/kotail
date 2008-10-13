@@ -2,68 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.ogroup.kotail.model;
 
-import java.util.Enumeration;
-import javax.swing.tree.TreeNode;
+import javax.management.ObjectName;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author denki
  */
-public class Bean implements TreeNode{
-
-    private String objectName;
-    private TreeNode parent;
-    
-    @Override
-    public Enumeration children() {
-        return null;
-    }
+public class Bean extends DefaultMutableTreeNode implements Comparable<Bean> {
 
     @Override
-    public boolean getAllowsChildren() {
-        return false;
+    public int compareTo(Bean o) {
+        return ((ObjectName) this.getUserObject()).getCanonicalName().compareTo(((ObjectName) o.getUserObject()).getCanonicalName());
     }
-
-    @Override
-    public TreeNode getChildAt(int childIndex) {
-        return null;
-    }
-
-    @Override
-    public int getChildCount() {
-        return 0;
-    }
-
-    @Override
-    public int getIndex(TreeNode node) {
-        //not found
-        return -1;
-    }
-
-    @Override
-    public TreeNode getParent() {
-        return parent;
-    }
-
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
-    }
-    
-    
 }

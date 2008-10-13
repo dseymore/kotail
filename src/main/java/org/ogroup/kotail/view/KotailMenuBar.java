@@ -5,12 +5,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
-import org.ogroup.kotail.model.Application;
-import org.ogroup.kotail.model.Group;
+import org.ogroup.kotail.MbeanDiscovery;
+import org.ogroup.kotail.model.Instance;
 import org.ogroup.kotail.model.Session;
-import org.ogroup.kotail.view.dialog.ApplicationDialog;
 
 /**
  *
@@ -22,46 +20,22 @@ public class KotailMenuBar extends JMenuBar{
         super();
         
         JMenu m = new JMenu("Menu");
-        JMenuItem addGroupItem = new JMenuItem("Add Group");
-        addGroupItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String s = (String)JOptionPane.showInputDialog(
-                    null,
-                    "Group name",
-                    "New Group",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    null,
-                    "");
-                Group g = new Group();
-                g.setName(s);
-                Session.getInstance().getRoot().add(g);
-                ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
-            }
-        });
-        m.add(addGroupItem);
-        
-        JMenuItem addAppItem = new JMenuItem("Add Application");
-        addAppItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ApplicationDialog ad = new ApplicationDialog();
-                if (ad.getRet() > 0){
-                    Group g = ad.getSelectedGroup();
-                    Application a = new Application();
-                    a.setName(ad.getApplicationName());
-                    a.setParent(g);
-                    g.insert(a, 1);
-                    ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload(g);
-                }
-            }
-        });
-        m.add(addAppItem);
-        
+       
         JMenuItem addInstanceItem = new JMenuItem("Add Instance");
+        addInstanceItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Instance i = new Instance();
+                i.setName("Ochan");
+                i.setHost("localhost");
+                i.setPort("1234");
+                Session.getInstance().getRoot().add(i);
+                ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
+                //now, lets fire off the mbean discovery
+                MbeanDiscovery.discoverMbeans(i);
+            }
+        });
         m.add(addInstanceItem);
         
         
