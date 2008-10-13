@@ -2,6 +2,9 @@ package org.ogroup.kotail;
 
 import org.ogroup.kotail.view.KotailFrame;
 import javax.swing.JFrame;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * Hello world!
@@ -9,18 +12,16 @@ import javax.swing.JFrame;
  */
 public class App 
 {
+    private static final Log LOG = LogFactory.getLog(App.class);
+    
     public static void main( String[] args )
     {
         try{
-//            JMXServiceURL url = new JMXServiceURL("rmi","",0,"/jndi/rmi://"+"acfsrv2.rnsolutions.com"+":"+"6789"+"/jmxrmi");
-//            JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-//            MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-//            Set<ObjectInstance> set = mbsc.queryMBeans(null, null);
-//            for (ObjectInstance oi : set){
-//                ObjectName n = oi.getObjectName();
-//                System.out.println(n.getCanonicalName());
-//            }
-            
+        
+        //do normal shit. 
+        BasicConfigurator.configure();
+        LOG.info("Started log4j");
+          
         JFrame frame = new KotailFrame();
         frame.pack();
         frame.setVisible(true);        

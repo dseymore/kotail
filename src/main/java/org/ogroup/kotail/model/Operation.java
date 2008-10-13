@@ -10,15 +10,25 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.management.MBeanOperationInfo;
+import javax.management.ObjectName;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author denki
  */
-public class Operation extends DefaultMutableTreeNode implements  Transferable{
+public class Operation extends DefaultMutableTreeNode implements Transferable{
 
-    private static DataFlavor[] FLAVOR = null;
+    public static DataFlavor FLAVOR = null;
+    
+    //i DO hate this. 
+    static{
+        try{
+            FLAVOR = new DataFlavor("text/html;class=java.lang.String");
+        }catch(Exception e){
+            //what?!
+        }
+    }
     
     private MBeanOperationInfo info;
 
@@ -37,27 +47,17 @@ public class Operation extends DefaultMutableTreeNode implements  Transferable{
     
      @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        return this;
+        return info.getName() + "|" + ((ObjectName)((Bean)this.getParent()).getUserObject()).getCanonicalName();
     }
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-        //crazy construction.. why isnt this static?
-        if (FLAVOR == null){
-            synchronized(this){
-                try{
-                    FLAVOR = new DataFlavor[] {new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType)};
-                }catch(Exception e){
-                    //what?!
-                }
-            }
-        }
-        return FLAVOR;
+        return new DataFlavor[]{FLAVOR};
     }
 
     @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return flavor.getMimeType().equals(DataFlavor.javaJVMLocalObjectMimeType);
+        return flavor.equals(FLAVOR);
     }
     
 }

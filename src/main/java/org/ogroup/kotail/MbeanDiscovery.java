@@ -17,6 +17,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.ogroup.kotail.model.Bean;
 import org.ogroup.kotail.model.Instance;
 import org.ogroup.kotail.model.Operation;
+import org.ogroup.kotail.model.Session;
 import org.ogroup.kotail.view.KotailFrame;
 
 /**
@@ -34,6 +35,7 @@ public class MbeanDiscovery {
                             JMXServiceURL url = new JMXServiceURL("rmi", "", 0, "/jndi/rmi://" + app.getHost() + ":" + app.getPort() + "/jmxrmi");
                             JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
                             MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+                            Session.getInstance().setConnection(mbsc);
                             Set<ObjectInstance> set = mbsc.queryMBeans(null, null);
                             for (ObjectInstance oi : set) {
                                 ObjectName n = oi.getObjectName();
