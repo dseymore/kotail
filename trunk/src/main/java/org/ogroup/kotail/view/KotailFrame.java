@@ -28,6 +28,7 @@ import org.ogroup.kotail.model.Session;
 public class KotailFrame extends JFrame{
     
     private static JTree tree; 
+    private static JTabbedPane tabs;
     
     public KotailFrame() {
         ResourceBundle bundle = ResourceBundle.getBundle("Messages");
@@ -47,7 +48,7 @@ public class KotailFrame extends JFrame{
         
         JScrollPane treeScroll = new JScrollPane(tree);
         
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         //handle dropping items. 
         new DropTarget(tabs, new OperationDropAdapter());
         //and the dragging FROM items
@@ -82,6 +83,11 @@ public class KotailFrame extends JFrame{
         return tree;
     }
 
+    public static JTabbedPane getTabs() {
+        return tabs;
+    }
+
+    
 
        
     
