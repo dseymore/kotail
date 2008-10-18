@@ -6,9 +6,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultTreeModel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ogroup.kotail.MbeanDiscovery;
 import org.ogroup.kotail.model.Instance;
 import org.ogroup.kotail.model.Session;
+import org.ogroup.kotail.view.dialog.InstanceDialog;
 
 /**
  *
@@ -16,6 +19,8 @@ import org.ogroup.kotail.model.Session;
  */
 public class KotailMenuBar extends JMenuBar{
 
+    private static final Log LOG = LogFactory.getLog(KotailMenuBar.class);
+    
     public KotailMenuBar() {
         super();
         
@@ -26,14 +31,8 @@ public class KotailMenuBar extends JMenuBar{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Instance i = new Instance();
-                i.setName("Ochan");
-                i.setHost("localhost");
-                i.setPort("1234");
-                Session.getInstance().getRoot().add(i);
-                ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
-                //now, lets fire off the mbean discovery
-                MbeanDiscovery.discoverMbeans(i);
+                InstanceDialog instanceDialog = new InstanceDialog();
+                instanceDialog.setVisible(true);
             }
         });
         m.add(addInstanceItem);

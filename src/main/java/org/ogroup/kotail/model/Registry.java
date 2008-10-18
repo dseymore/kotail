@@ -51,19 +51,21 @@ public class Registry {
      */
     public DefaultMultiValueCategoryDataset refresh(DefaultMultiValueCategoryDataset current) {
         List<Watchable> todo = frontend.get(current);
+        Date now = new Date();
         for (Watchable what : todo) {
             try {
                 Object result = what.getConnection().invoke(what.getObjectName(), what.getOperationInfo().getName(), new Object[]{}, new String[]{});
+                LOG.debug("Result: (" + what.getName() + ")(" + result + ")");
                 List<Object> values = new ArrayList<Object>();
                 values.add(result);
                 //new data!
-                current.add(values, what.getName(), new Date());
+                current.add(values, what.getName(), now);
             } catch (Exception e) {
                 LOG.error("Inserting -1 for unavaiable value:" + what.getObjectName(), e);
                 List<Object> values = new ArrayList<Object>();
                 values.add(new Long(-1));
                 //unable to invoke that dude.. insert a -1
-                current.add(values, what.getObjectName(), new Date());
+                current.add(values, what.getObjectName(), now);
             }
         }
         return current;
