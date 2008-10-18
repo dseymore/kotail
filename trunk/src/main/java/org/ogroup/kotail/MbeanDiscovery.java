@@ -4,6 +4,9 @@
  */
 package org.ogroup.kotail;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
@@ -35,8 +38,10 @@ public class MbeanDiscovery {
                             JMXServiceURL url = new JMXServiceURL("rmi", "", 0, "/jndi/rmi://" + app.getHost() + ":" + app.getPort() + "/jmxrmi");
                             JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
                             MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-                            Session.getInstance().setConnection(mbsc);
+                            //the connection gets stored in the instance
+                            app.setUserObject(mbsc);
                             Set<ObjectInstance> set = mbsc.queryMBeans(null, null);
+                            List<Bean> beans = new ArrayList<Bean>();
                             for (ObjectInstance oi : set) {
                                 ObjectName n = oi.getObjectName();
                                 Bean b = new Bean();
@@ -53,11 +58,16 @@ public class MbeanDiscovery {
                                 }
                                 //only show beans with operations
                                 if (!b.isLeaf()){
-                                    app.add(b);
+                                    beans.add(b);
                                 }
-                                //reload the tree!
-                                ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
                             }
+                            Collections.sort(beans);
+                            //now they should be sorted, add them to the tree
+                            for (Bean b : beans){
+                                app.add(b);
+                            }
+                            //reload the tree!
+                            ((DefaultTreeModel)(KotailFrame.getTree().getModel())).reload();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -15,7 +15,7 @@ public class Instance extends DefaultMutableTreeNode {
     private String name;
     private String host;
     private String port;
-
+    
     public String getName() {
         return name;
     }
@@ -43,6 +43,7 @@ public class Instance extends DefaultMutableTreeNode {
     public void setPort(String port) {
         this.port = port;
     }
+    
     
     
 }
