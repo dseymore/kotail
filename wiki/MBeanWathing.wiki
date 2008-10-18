@@ -8,12 +8,12 @@ A graph is a set of mbeans, each graph has a refresh interval. Each graph regist
 
 *Handling storage*
 We have a few options here.. 
-* EJB3 entities
-* berklydb
-* jroundrobin
+  * EJB3 entities
+  * berklydb
+  * jroundrobin
 
 *Handling refreshes*
-* Quartz job
-* internal threading
-* Spring batch?
-* What is commons pipeline?
+  * Quartz job
+  * internal threading
+  * Spring batch?
+  * What is commons pipeline?
