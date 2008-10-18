@@ -16,11 +16,12 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.ChartFactory;
@@ -28,7 +29,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.DefaultMultiValueCategoryDataset;
 import org.ogroup.kotail.model.Bean;
+import org.ogroup.kotail.model.Instance;
 import org.ogroup.kotail.model.Operation;
+import org.ogroup.kotail.model.Registry;
 
 /**
  *
@@ -52,34 +55,43 @@ public class OperationDropAdapter extends DropTargetAdapter{
                     Double.valueOf(KotailFrame.getTabs().getBounds().getLocation().getY()).intValue(), 
                     Double.valueOf(KotailFrame.getTabs().getWidth()).intValue(), 
                     Double.valueOf(tab.getHeight()).intValue());
-//            Point tabPt = dtde.getLocation();
-//            SwingUtilities.convertPointFromScreen(tabPt, KotailFrame.getTabs());
             Point glassPt = dtde.getLocation();
-            if (fullWidth.contains(glassPt)){
-                LOG.debug("NEW TAB");
-            }
-            dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+            dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);  
             Transferable t = dtde.getTransferable();
-
             //our operation! (The droped item)
             Operation o = (Operation)t.getTransferData(Operation.FLAVOR);
             MBeanOperationInfo opInfo = o.getInfo();
-            ObjectName on = (ObjectName)((Bean)o.getParent()).getUserObject();
-           
-            //start a dataset.. (TODO - make this more dynamic)
-            DefaultMultiValueCategoryDataset dataset = new DefaultMultiValueCategoryDataset();
-            
-            JFreeChart chart = ChartFactory.createLineChart("Title", "Label 1", "Label 2", dataset, PlotOrientation.VERTICAL, true, false, false);
-            BufferedImage image = chart.createBufferedImage(500,300);
-            JLabel lblChart = new JLabel();
-            lblChart.setIcon(new ImageIcon(image));
-            JPanel p = new JPanel();
-            p.setLayout(new FlowLayout());
-            p.add(lblChart);
-            KotailFrame.getTabs().add(p);
-            
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new RefreshThread(lblChart,on,opInfo,dataset), new Date(), 3000);
+            Bean parent = ((Bean)o.getParent());
+            ObjectName on = (ObjectName)parent.getUserObject();
+            Instance app = ((Instance)parent.getParent());
+            String operationName = Registry.getPathName(app, on, opInfo);
+            //Logic for new or reused panel
+            if (fullWidth.contains(glassPt)){
+                LOG.debug("NEW TAB");
+
+                //start a dataset.. 
+                DefaultMultiValueCategoryDataset dataset = new DefaultMultiValueCategoryDataset();
+                //and link it with this panel somehow..
+                DataPanel p = new DataPanel();
+                p.setDataset(dataset);
+
+                JFreeChart chart = ChartFactory.createLineChart("Title", "Label 1", "Label 2", dataset, PlotOrientation.VERTICAL, true, false, false);
+                BufferedImage image = chart.createBufferedImage(500,300);
+                JLabel lblChart = new JLabel();
+                lblChart.setIcon(new ImageIcon(image));
+                p.setLayout(new FlowLayout());
+                p.add(lblChart);
+                KotailFrame.getTabs().add(p);
+
+
+                Timer timer = new Timer();
+                TimerTask graphRefresh  = new RefreshThread(lblChart,on,opInfo,dataset, ((MBeanServerConnection)app.getUserObject()), operationName);
+                timer.scheduleAtFixedRate(graphRefresh, new Date(), 3000);
+            }else{
+                //register this bean with whatever dataset we're currently looking at. 
+                DataPanel dataPanel = ((DataPanel)KotailFrame.getTabs().getSelectedComponent());
+                Registry.getInstance().newWatch(operationName, dataPanel.getDataset(), ((MBeanServerConnection)app.getUserObject()), opInfo, on);
+            }
             
             LOG.info("returning");
             
