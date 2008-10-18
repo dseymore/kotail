@@ -44,11 +44,18 @@ public class OperationDropAdapter extends DropTargetAdapter{
             DropTargetContext context = dtde.getDropTargetContext();
             //so, we have the thing we're dropping onto... how would I determine if it is the tab 'tab' or the panel.
             LOG.debug(context.getComponent().getClass());
-            Rectangle tab = KotailFrame.getTabs().getUI().getTabBounds(KotailFrame.getTabs(), KotailFrame.getTabs().getSelectedIndex());
+            Rectangle tab = KotailFrame.getTabs().getUI().getTabBounds(KotailFrame.getTabs(), KotailFrame.getTabs().getTabCount() -1 );
+            Rectangle fullWidth = new Rectangle(
+                    //upper left X
+                    Double.valueOf(KotailFrame.getTabs().getBounds().getLocation().getX()).intValue(), 
+                    //upper left Y
+                    Double.valueOf(KotailFrame.getTabs().getBounds().getLocation().getY()).intValue(), 
+                    Double.valueOf(KotailFrame.getTabs().getWidth()).intValue(), 
+                    Double.valueOf(tab.getHeight()).intValue());
 //            Point tabPt = dtde.getLocation();
 //            SwingUtilities.convertPointFromScreen(tabPt, KotailFrame.getTabs());
             Point glassPt = dtde.getLocation();
-            if (tab.contains(glassPt)){
+            if (fullWidth.contains(glassPt)){
                 LOG.debug("NEW TAB");
             }
             dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
