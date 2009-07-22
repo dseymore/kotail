@@ -6,7 +6,9 @@ package org.ogroup.kotail;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
@@ -20,7 +22,6 @@ import javax.swing.tree.DefaultTreeModel;
 import org.ogroup.kotail.model.Bean;
 import org.ogroup.kotail.model.Instance;
 import org.ogroup.kotail.model.Operation;
-import org.ogroup.kotail.model.Session;
 import org.ogroup.kotail.view.KotailFrame;
 
 /**
@@ -36,7 +37,13 @@ public class MbeanDiscovery {
                     public void run() {
                         try {
                             JMXServiceURL url = new JMXServiceURL("rmi", "", 0, "/jndi/rmi://" + app.getHost() + ":" + app.getPort() + "/jmxrmi");
-                            JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
+							Map environment = null;
+							if (app.getUsername() != null){
+								environment = new HashMap();
+								String[]  credentials = new String[] {app.getUsername(), app.getPassword()};
+								environment.put (JMXConnector.CREDENTIALS, credentials);
+							}
+                            JMXConnector jmxc = JMXConnectorFactory.connect(url, environment);
                             MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
                             //the connection gets stored in the instance
                             app.setUserObject(mbsc);
