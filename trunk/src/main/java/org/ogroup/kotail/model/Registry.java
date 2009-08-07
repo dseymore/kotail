@@ -9,9 +9,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.management.MBeanFeatureInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.SimpleType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.data.statistics.DefaultMultiValueCategoryDataset;
@@ -40,8 +44,8 @@ public class Registry {
         return instance;
     }
 
-    public static String getPathName(Instance instance, ObjectName objectName, MBeanOperationInfo operationInfo) {
-        return instance.getName() + ":" + objectName.toString() + "/" + operationInfo.getName();
+    public static String getPathName(Instance instance, ObjectName objectName, MBeanFeatureInfo operationInfo, String name) {
+        return instance.getName() + ":" + objectName.toString() + "/" + operationInfo.getName() + ":" + name;
     }
 
     /**
@@ -54,12 +58,22 @@ public class Registry {
         Date now = new Date();
         for (Watchable what : todo) {
             try {
-                Object result = what.getConnection().invoke(what.getObjectName(), what.getOperationInfo().getName(), new Object[]{}, new String[]{});
-                LOG.debug("Result: (" + what.getName() + ")(" + result + ")");
+				Object result = null;
+				if (what.getFeatureInfo() instanceof MBeanOperationInfo){
+					result = what.getConnection().invoke(what.getObjectName(), what.getFeatureInfo().getName(), new Object[]{}, new String[]{});
+				}else{
+					result = what.getConnection().getAttribute(what.getObjectName(), what.getFeatureInfo().getName());
+					if (result instanceof CompositeDataSupport){
+						CompositeDataSupport support = (CompositeDataSupport)result;
+						CompositeType type = support.getCompositeType();
+						result = support.get(what.getName());
+					}
+				}
+                LOG.debug("Result: (" + what.getLabel() + ")(" + result + ")");
                 List<Object> values = new ArrayList<Object>();
                 values.add(result);
                 //new data!
-                current.add(values, what.getName(), now);
+                current.add(values, what.getLabel(), now);
             } catch (Exception e) {
                 LOG.error("Inserting -1 for unavaiable value:" + what.getObjectName(), e);
                 List<Object> values = new ArrayList<Object>();
@@ -71,12 +85,12 @@ public class Registry {
         return current;
     }
 
-    public void newWatch(String nameMe, DefaultMultiValueCategoryDataset graph, MBeanServerConnection connection, MBeanOperationInfo operation, ObjectName objectName) {
-        Watchable dude = new Watchable(nameMe, objectName, operation, connection);
-        if (backend.get(nameMe) == null) {
-            backend.put(nameMe, dude);
+    public void newWatch(String label, String name, DefaultMultiValueCategoryDataset graph, MBeanServerConnection connection, MBeanFeatureInfo featureInfo, ObjectName objectName) {
+        Watchable dude = new Watchable(label, name, objectName, featureInfo, connection);
+        if (backend.get(label) == null) {
+            backend.put(label, dude);
         } else {
-            dude = backend.get(nameMe);
+            dude = backend.get(label);
         }
         //and add to the existing graph or register a new graph
         if (frontend.get(graph) != null) {
@@ -95,15 +109,17 @@ public class Registry {
      */
     class Watchable {
 
+		private String label;
         private String name;
         private ObjectName objectName;
-        private MBeanOperationInfo operationInfo;
+        private MBeanFeatureInfo featureInfo;
         private MBeanServerConnection connection;
 
-        public Watchable(String name, ObjectName objectName, MBeanOperationInfo operationInfo, MBeanServerConnection connection) {
-            this.name = name;
+        public Watchable(String label, String name, ObjectName objectName, MBeanFeatureInfo operationInfo, MBeanServerConnection connection) {
+            this.label = label;
+			this.name = name;
             this.objectName = objectName;
-            this.operationInfo = operationInfo;
+            this.featureInfo = operationInfo;
             this.connection = connection;
         }
 
@@ -123,13 +139,13 @@ public class Registry {
             this.objectName = objectName;
         }
 
-        public MBeanOperationInfo getOperationInfo() {
-            return operationInfo;
-        }
+		public String getLabel() {
+			return label;
+		}
 
-        public void setOperationInfo(MBeanOperationInfo operationInfo) {
-            this.operationInfo = operationInfo;
-        }
+		public void setLabel(String label) {
+			this.label = label;
+		}
 
         public String getName() {
             return name;
@@ -138,6 +154,18 @@ public class Registry {
         public void setName(String name) {
             this.name = name;
         }
+
+		
+
+		public MBeanFeatureInfo getFeatureInfo() {
+			return featureInfo;
+		}
+
+		public void setFeatureInfo(MBeanFeatureInfo featureInfo) {
+			this.featureInfo = featureInfo;
+		}
+
+
     }
 }
 

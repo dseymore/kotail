@@ -49,7 +49,7 @@ public class InstanceDialog extends JDialog {
     }
 
     private void buildMe() {
-        this.setLayout(new GridLayout(4, 2));
+        this.setLayout(new GridLayout(6, 2));
 
         nameField = new JTextField();
         host = new JTextField();

@@ -5,7 +5,7 @@
 
 package org.ogroup.kotail.view;
 
-import java.awt.dnd.DnDConstants;
+import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
@@ -14,15 +14,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ogroup.kotail.model.Operation;
 
 /**
  *
  * @author denki
  */
-public class OperationDragGestureListener implements DragGestureListener {
+public class WatchableDragGestureListener implements DragGestureListener {
     
-    private static final Log LOG = LogFactory.getLog(OperationDragGestureListener.class);
+    private static final Log LOG = LogFactory.getLog(WatchableDragGestureListener.class);
     
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
@@ -36,7 +35,7 @@ public class OperationDragGestureListener implements DragGestureListener {
             } else {
                 DefaultMutableTreeNode selection = (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (selection.isLeaf()) {
-                    dge.startDrag(DragSource.DefaultCopyDrop, (Operation)selection);
+                    dge.startDrag(DragSource.DefaultCopyDrop, (Transferable)selection);
                 } else {
                     LOG.info("Not a leaf - beep");
                     tree.getToolkit().beep();
