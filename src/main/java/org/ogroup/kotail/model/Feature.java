@@ -9,14 +9,14 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import javax.management.MBeanOperationInfo;
+import javax.management.MBeanFeatureInfo;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author denki
  */
-public class Operation extends DefaultMutableTreeNode implements Transferable{
+public class Feature extends DefaultMutableTreeNode implements Transferable{
 
     public static DataFlavor FLAVOR = null;
     
@@ -28,20 +28,24 @@ public class Operation extends DefaultMutableTreeNode implements Transferable{
             //what?!
         }
     }
-    
-    private MBeanOperationInfo info;
 
-    public MBeanOperationInfo getInfo() {
+	private MBeanFeatureInfo info;
+	private String name;
+
+    public MBeanFeatureInfo getInfo() {
         return info;
     }
 
-    public void setInfo(MBeanOperationInfo info) {
+    public void setInfo(MBeanFeatureInfo info) {
         this.info = info;
     }
 
     @Override
     public String toString() {
-        return info.getName();
+        if (getName() == null){
+			return info.getName();
+		}
+		return getName();
     }
     
      @Override
@@ -59,5 +63,15 @@ public class Operation extends DefaultMutableTreeNode implements Transferable{
     public boolean isDataFlavorSupported(DataFlavor flavor) {
         return flavor.equals(FLAVOR);
     }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
     
 }

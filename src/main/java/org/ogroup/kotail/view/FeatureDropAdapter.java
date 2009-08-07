@@ -6,8 +6,6 @@
 package org.ogroup.kotail.view;
 
 import java.awt.FlowLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetAdapter;
@@ -17,7 +15,8 @@ import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.management.MBeanOperationInfo;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanFeatureInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.swing.ImageIcon;
@@ -28,45 +27,41 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.DefaultMultiValueCategoryDataset;
+import org.ogroup.kotail.model.Attribute;
 import org.ogroup.kotail.model.Bean;
 import org.ogroup.kotail.model.Instance;
-import org.ogroup.kotail.model.Operation;
+import org.ogroup.kotail.model.Feature;
 import org.ogroup.kotail.model.Registry;
+import org.ogroup.kotail.view.util.DropUtils;
 
 /**
  *
  * @author denki
  */
-public class OperationDropAdapter extends DropTargetAdapter{
+public class FeatureDropAdapter extends DropTargetAdapter{
 
-    private static final Log LOG = LogFactory.getLog(OperationDropAdapter.class);
+    private static final Log LOG = LogFactory.getLog(FeatureDropAdapter.class);
     
     @Override
     public void drop(DropTargetDropEvent dtde) {
         try{
             DropTargetContext context = dtde.getDropTargetContext();
-            //so, we have the thing we're dropping onto... how would I determine if it is the tab 'tab' or the panel.
-            LOG.debug(context.getComponent().getClass());
-            Rectangle tab = KotailFrame.getTabs().getUI().getTabBounds(KotailFrame.getTabs(), KotailFrame.getTabs().getTabCount() -1 );
-            Rectangle fullWidth = new Rectangle(
-                    //upper left X
-                    Double.valueOf(KotailFrame.getTabs().getBounds().getLocation().getX()).intValue(), 
-                    //upper left Y
-                    Double.valueOf(KotailFrame.getTabs().getBounds().getLocation().getY()).intValue(), 
-                    Double.valueOf(KotailFrame.getTabs().getWidth()).intValue(), 
-                    Double.valueOf(tab.getHeight()).intValue());
-            Point glassPt = dtde.getLocation();
             dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);  
             Transferable t = dtde.getTransferable();
             //our operation! (The droped item)
-            Operation o = (Operation)t.getTransferData(Operation.FLAVOR);
-            MBeanOperationInfo opInfo = o.getInfo();
-            Bean parent = ((Bean)o.getParent());
+            Feature o = (Feature)t.getTransferData(Feature.FLAVOR);
+            MBeanFeatureInfo opInfo = o.getInfo();
+			Bean parent = null;
+			if (opInfo instanceof MBeanAttributeInfo){
+				parent = ((Bean)((Attribute)o.getParent()).getParent());
+			}else{
+				parent = ((Bean)o.getParent());
+			}
             ObjectName on = (ObjectName)parent.getUserObject();
             Instance app = ((Instance)parent.getParent());
-            String operationName = Registry.getPathName(app, on, opInfo);
+            String operationName = Registry.getPathName(app, on, opInfo, o.getName());
             //Logic for new or reused panel
-            if (fullWidth.contains(glassPt)){
+            if (DropUtils.isDragToNewTab(dtde)){
                 LOG.debug("NEW TAB");
 
                 //start a dataset.. 
@@ -85,12 +80,12 @@ public class OperationDropAdapter extends DropTargetAdapter{
 
 
                 Timer timer = new Timer();
-                TimerTask graphRefresh  = new RefreshThread(lblChart,on,opInfo,dataset, ((MBeanServerConnection)app.getUserObject()), operationName);
+                TimerTask graphRefresh  = new RefreshThread(lblChart,on,opInfo,dataset, ((MBeanServerConnection)app.getUserObject()), operationName, o.getName());
                 timer.scheduleAtFixedRate(graphRefresh, new Date(), 3000);
             }else{
                 //register this bean with whatever dataset we're currently looking at. 
                 DataPanel dataPanel = ((DataPanel)KotailFrame.getTabs().getSelectedComponent());
-                Registry.getInstance().newWatch(operationName, dataPanel.getDataset(), ((MBeanServerConnection)app.getUserObject()), opInfo, on);
+                Registry.getInstance().newWatch(operationName, o.getName(), dataPanel.getDataset(), ((MBeanServerConnection)app.getUserObject()), opInfo, on);
             }
             
             LOG.info("returning");

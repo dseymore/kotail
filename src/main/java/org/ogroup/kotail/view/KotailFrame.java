@@ -50,10 +50,10 @@ public class KotailFrame extends JFrame{
         
         tabs = new JTabbedPane();
         //handle dropping items. 
-        new DropTarget(tabs, new OperationDropAdapter());
+        new DropTarget(tabs, new FeatureDropAdapter());
         //and the dragging FROM items
         DragSource dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY_OR_MOVE, new OperationDragGestureListener());
+        dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY_OR_MOVE, new WatchableDragGestureListener());
         
         JScrollPane tabScroll = new JScrollPane(tabs);
         
@@ -64,6 +64,7 @@ public class KotailFrame extends JFrame{
         pieDataset.setValue("JavaWorld", new Integer(75));
         pieDataset.setValue("Other", new Integer(25));
 
+		//NOTE - we must have atleast one tab always open... or else the drop target thing breaks
         JFreeChart chart = ChartFactory.createPieChart("Sample Pie Chart",  pieDataset,true,false,false);
         BufferedImage image = chart.createBufferedImage(500,300);
         JLabel lblChart = new JLabel();

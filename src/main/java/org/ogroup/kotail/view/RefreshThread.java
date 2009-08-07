@@ -2,6 +2,8 @@ package org.ogroup.kotail.view;
 
 import java.awt.image.BufferedImage;
 import java.util.TimerTask;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanFeatureInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -25,11 +27,11 @@ public class RefreshThread extends TimerTask {
     private JLabel icon;
     private DefaultMultiValueCategoryDataset dataset;
 
-    public RefreshThread(JLabel icon, ObjectName on, MBeanOperationInfo opInfo, DefaultMultiValueCategoryDataset dataset, MBeanServerConnection connection, String name){
+    public RefreshThread(JLabel icon, ObjectName on, MBeanFeatureInfo featureInfo, DefaultMultiValueCategoryDataset dataset, MBeanServerConnection connection, String label, String name){
         this.icon = icon;
         this.dataset = dataset;
         //register me!
-        Registry.getInstance().newWatch(name, dataset, connection, opInfo, on);
+        Registry.getInstance().newWatch(label, name, dataset, connection, featureInfo, on);
     }
     
     @Override
